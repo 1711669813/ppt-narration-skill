@@ -6,6 +6,8 @@
 
 [下载完整演示视频（MP4）](https://github.com/1711669813/ppt-narration-skill/releases/download/demo-v1/ppt-narration-demo.mp4) · [查看演示发布页](https://github.com/1711669813/ppt-narration-skill/releases/tag/demo-v1)
 
+[下载演示源 PPT：稀疏传感下桥梁损伤识别](https://github.com/1711669813/ppt-narration-skill/releases/download/demo-v1/bridge-damage-demo.pptx)
+
 实际生成效果：**1080p，约 17 分 1 秒，文件约 115 MB**。下载后可用本地播放器查看 PPT 讲解视频效果。
 
 这个包的作用：**把一个 .pptx 变成一支"演讲人讲解 PPT"风格的 1080p 视频**——保留原页顺序/文字/图片/版式不动，逐页配上自然的中文口语讲稿（解释重点、不逐字念），用普通话人声配音，按配音实际时长自动翻页，并且在讲到某一部分时**在画面上把那一部分标出来**（高亮框 / 下划线 / 自动放大），最后同时给出"页码—讲稿—时长"对照稿和一份外挂字幕。
