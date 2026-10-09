@@ -63,7 +63,8 @@ def main():
     L.append("标记规则：首页、末页与每页开头“这页讲什么”的句子不标记；说明行/提示行用下划线；"
              "较宽的通栏用高亮框；较小的卡片、图、流程小块自动放大。")
     srt_name = os.environ.get("SRT_NAME", "subtitles.srt")
-    L.append("字幕：外挂 %s（未烧入画面，播放器可自己开关）" % srt_name)
+    L.append("字幕：外挂 %s（未烧入画面，播放器可自己开关）" % srt_name
+             if os.environ.get("SUBTITLES", "1") != "0" else "字幕：本次未生成")
     L.append("总时长：%s（%.1f 秒）" % (ms(t["total"]), t["total"]))
     L.append("")
     L.append("> 页面顺序、文字、图片、版式取自原 PPT，逐页导出 4K 后按配音实际时长自动翻页；"

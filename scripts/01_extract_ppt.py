@@ -55,14 +55,16 @@ def walk(shapes, res, parent=None):
         if getattr(sh, "has_text_frame", False) and sh.has_text_frame:
             txt = " / ".join(p.text.strip() for p in sh.text_frame.paragraphs if p.text.strip())
         if getattr(sh, "has_table", False) and sh.has_table:
+            entry["table_text"] = [[c.text.strip() for c in row.cells] for row in sh.table.rows]
             txt = "表格: " + " | ".join(c.text.strip().replace("\n", " ") for c in sh.table.rows[0].cells)
             rows, acc = [], y
             for r in sh.table.rows:            # 每一行的矩形（写 cue 时按行高亮用；表头是第 0 行）
+                row_height = r.height * h / sh.height if sh.height else r.height
                 rows.append([round(x / SW, 4), round(acc / SH, 4),
-                             round((x + w) / SW, 4), round((acc + r.height) / SH, 4)])
-                acc += r.height
+                             round((x + w) / SW, 4), round((acc + row_height) / SH, 4)])
+                acc += row_height
             entry["rows"] = rows
-        entry["text"] = txt[:70]
+        entry["text"] = txt
         res.append(entry)
         if sh.shape_type == 6:
             el = sh._element

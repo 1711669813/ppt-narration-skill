@@ -63,6 +63,31 @@ def export_com(src, raw_dir):
         pythoncom.CoUninitialize()
 
 
+def export_powershell(src, raw_dir):
+    """Use Windows' built-in COM host for the portable desktop distribution."""
+    command = r'''
+$ErrorActionPreference = 'Stop'
+$app = $null
+$deck = $null
+try {
+    $app = New-Object -ComObject PowerPoint.Application
+    $deck = $app.Presentations.Open($env:PPT_EXPORT_SOURCE, -1, 0, 0)
+    Write-Output ('PowerPoint slides: ' + $deck.Slides.Count)
+    $deck.Export($env:PPT_EXPORT_DESTINATION, 'PNG', 3840, 2160)
+} finally {
+    if ($null -ne $deck) { $deck.Close(); [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($deck) }
+    if ($null -ne $app) { $app.Quit(); [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($app) }
+}
+'''
+    env = os.environ.copy()
+    env.update(PPT_EXPORT_SOURCE=os.path.abspath(src), PPT_EXPORT_DESTINATION=os.path.abspath(raw_dir))
+    completed = subprocess.run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", command],
+                               env=env, capture_output=True, text=True, errors="replace", timeout=180)
+    if completed.returncode:
+        raise RuntimeError("PowerPoint 导出失败，请检查 Office 是否安装并完成激活。\n" + completed.stderr[-1200:])
+    print(completed.stdout.strip())
+
+
 def export_libreoffice(src, raw_dir):
     for exe in ("soffice", "libreoffice"):
         if shutil.which(exe):
@@ -93,7 +118,10 @@ if __name__ == "__main__":
     os.makedirs(raw, exist_ok=True)
     if os.name == "nt":
         try:
-            export_com(os.path.abspath(a.pptx), raw)
+            if os.environ.get("PPT_DESKTOP_MODE") == "1":
+                export_powershell(os.path.abspath(a.pptx), raw)
+            else:
+                export_com(os.path.abspath(a.pptx), raw)
         except Exception as e:
             print("PowerPoint COM 导出失败：%s\n改用 LibreOffice 试一次" % e)
             export_libreoffice(os.path.abspath(a.pptx), raw)

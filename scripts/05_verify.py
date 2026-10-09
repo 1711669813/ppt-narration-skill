@@ -52,7 +52,9 @@ def probe(video):
     print("音频 %s" % (a[0]["codec_name"] if a else "[缺失] 没有音轨"))
     dur = float(j["format"]["duration"])
     print("时长 %.2fs = %d:%05.2f" % (dur, dur // 60, dur % 60))
-    return dur, bool(v), bool(a)
+    valid_video = bool(v) and v[0].get("codec_name") == "h264" and v[0].get("width") == W and v[0].get("height") == H and abs(fps - 30) < .01
+    valid_audio = bool(a) and a[0].get("codec_name") == "aac"
+    return dur, valid_video, valid_audio
 
 
 def volume(video):
@@ -63,6 +65,9 @@ def volume(video):
         print("音量 mean %s dB / max %s dB" % (mm.group(1), mx.group(1)))
         if float(mx.group(1)) < -30:
             print("[缺失] 音量过低，检查配音是否成功")
+            return False
+        return True
+    return False
 
 
 def frame_from(video, t, path):
@@ -100,6 +105,7 @@ def cue_checks(video, plan):
     else:
         print("比对 %d 个 cue，最大均值差 %.2f（阈值 3）→ %s"
               % (n, worst, "通过" if worst < 3 else "[失败] 见 " + worst_at))
+    return worst < 3
 
 
 def geometry_check(video, plan, sample=8):
@@ -115,7 +121,7 @@ def geometry_check(video, plan, sample=8):
                  os.path.join(ROOT, "slides_png_4k", "slide%02d.png" % p["page"]))]
     if not cands:
         print("\n== 放大几何 ==\n（没有放大句或缺少 4K 页面图，跳过）")
-        return
+        return True
     step = max(1, len(cands) // sample)
     print("\n== 放大几何（独立于渲染代码：纯 PIL 裁 4K 原图比对）==")
     print("page.cue  缩放   目标块差  黑边%  判定")
@@ -142,6 +148,7 @@ def geometry_check(video, plan, sample=8):
               % (p["page"], c["i"] + 1, 1.0 / vw, d, black, "ok" if d <= 22 and black <= 1.5 else "[失败]"))
     print("最差：目标块差 %.2f（阈值 22）、黑边 %.2f%%（阈值 1.5）→ %s"
           % (badw, badb, "通过" if badw <= 22 and badb <= 1.5 else "[失败] 画面被拉伸或越界"))
+    return badw <= 22 and badb <= 1.5
 
 
 def asr_check(video, plan, model_size, n):
@@ -210,9 +217,11 @@ if __name__ == "__main__":
         print("[失败] 时长 %.1fs 超过上限 %.0fs" % (dur, a.max))
     else:
         print("时长在上限内（%.0fs）" % a.max)
-    volume(video)
-    cue_checks(video, plan)
-    geometry_check(video, plan)
+    audio_ok = volume(video)
+    frames_ok = cue_checks(video, plan)
+    geometry_ok = geometry_check(video, plan)
     if a.asr:
         asr_check(video, plan, a.asr, a.asr_n)
     print("\n完成。逐句对照稿见 scripts/04_make_sheet.py 的产物。")
+    if not all((has_v, has_a, dur <= a.max, audio_ok, frames_ok, geometry_ok)):
+        sys.exit("成片检查未通过，请查看上方检查结果。")

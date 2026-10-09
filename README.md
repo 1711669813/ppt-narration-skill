@@ -2,6 +2,15 @@
 
 **ppt-narration-skill**：面向 AI Agent 的 PPT 讲解视频生成 Skill，支持中文配音、同步高亮、字幕与讲稿对照表。
 
+## Windows 桌面版
+
+[下载 EXE](https://github.com/1711669813/ppt-narration-skill/releases/tag/desktop-v0.1.0) · [使用说明](docs/desktop-guide.md)
+
+无需安装 Python 或 FFmpeg。填写自己的 AI API 配置，导入 16:9 PPT，选择讲解风格和音色即可生成视频。
+需要联网，并安装 PowerPoint 或 LibreOffice。
+
+源码 Skill 流程的结果仍保存到本包 `results/`；桌面版保存到界面所选位置下的 `results/`。
+
 ## 演示视频
 
 [下载完整演示视频（MP4）](https://github.com/1711669813/ppt-narration-skill/releases/download/demo-v1/ppt-narration-demo.mp4) · [查看演示发布页](https://github.com/1711669813/ppt-narration-skill/releases/tag/demo-v1)

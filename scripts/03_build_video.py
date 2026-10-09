@@ -306,6 +306,9 @@ async def main():
 
     total = sum(p["dur"] for p in plan)
     print("TOTAL %.1fs = %d:%02d" % (total, total // 60, total % 60))
+    limit = float(os.environ.get("MAX_DURATION_SECONDS", "0"))
+    if limit and total > limit:
+        raise RuntimeError("配音实测 %.1f 秒，超过上限 %.1f 秒。请缩短讲稿或提高时长上限后重试。" % (total, limit))
 
     for p in plan:                     # absolute times
         p["start"] = sum(q["dur"] for q in plan if q["page"] < p["page"])

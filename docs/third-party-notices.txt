@@ -1,0 +1,20 @@
+PPT Narration Desktop - Third-party software
+
+This application uses Python, Tcl/Tk, PyInstaller, python-pptx, edge-tts,
+Pillow, mutagen, NumPy, requests, pywin32 and their dependencies.
+Their respective licenses remain in effect. PyInstaller's bootloader
+exception permits packaging applications under their own licenses.
+
+FFmpeg and ffprobe are independent executables invoked as subprocesses.
+The supplied build is FFmpeg 9.0.1-full_build-www.gyan.dev, built with
+--enable-gpl --enable-version3. It is licensed under GNU GPL version 3.
+FFmpeg copyright: the FFmpeg developers.
+Build provider: https://www.gyan.dev/ffmpeg/builds/
+FFmpeg source: https://github.com/FFmpeg/FFmpeg/tree/n9.0.1
+FFmpeg source archives: https://ffmpeg.org/releases/
+FFmpeg licensing: https://ffmpeg.org/legal.html
+GNU GPL v3: https://www.gnu.org/licenses/gpl-3.0.txt
+
+The build provider documents the enabled external libraries and their
+respective upstream sources on its builds page. Copies of binary build
+configuration and the FFmpeg license accompany the desktop release.

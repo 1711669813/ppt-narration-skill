@@ -2,8 +2,17 @@
 import os
 from pathlib import Path
 import tempfile
+import sys
 
-RESULTS = Path(__file__).resolve().parents[1] / "results"
+for stream in (sys.stdout, sys.stderr):
+    if hasattr(stream, "reconfigure"):
+        stream.reconfigure(encoding="utf-8", errors="replace")
+
+if getattr(sys, "frozen", False) or os.environ.get("PPT_DESKTOP_MODE") == "1":
+    # Packaged resources are temporary/read-only; desktop output must persist.
+    RESULTS = Path(os.environ.get("PPT_DESKTOP_RESULTS", str(Path(sys.executable).parent / "results"))).resolve()
+else:
+    RESULTS = Path(__file__).resolve().parents[1] / "results"
 
 
 def output_path(value=None, default=None):
