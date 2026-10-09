@@ -1,0 +1,18 @@
+# PPT 讲解录屏生成包 —— 依赖清单
+# 安装：pip install -r requirements.txt        （或运行 install.bat / install.sh）
+# 说明：# 必需 的缺一不可；# 可选 只在做验收/复核时用
+
+# ---- 必需 ----
+python-pptx==1.0.2        # 读取 .pptx 的文字、形状坐标、表格行高、演讲者备注
+edge-tts>=6.1.12          # 中文人声配音（微软在线语音，需要联网；音色即服务端模型）
+pillow>=10.3,<11          # 逐帧画标记、压暗、缩放（1920×1080 帧渲染的核心）
+numpy>=1.24               # 验收脚本里的像素比对
+
+# ---- Windows 必需（用 PowerPoint COM 导出 4K 页面图）----
+pywin32>=306              # 仅 Windows；Linux/macOS 用 LibreOffice 代替，不需要
+
+# ---- 可选（验收/复核）----
+mutagen>=1.47             # 读 mp3 时长（若不用，脚本退回用 ffprobe 取时长）
+faster-whisper>=1.0.0     # ASR 抽查：确认"标的那块＝在讲的那句"（模型见 models/README.md）
+zhconv>=1.4               # ASR 转写常输出繁体，比对前做繁简归一化，避免覆盖率被误判
+huggingface_hub>=0.23     # 只有用 models/fetch_models.py 预下载模型时才需要

@@ -1,0 +1,19 @@
+# Generated videos, audio, slide images, reports, and model caches
+/results/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Local credentials and machine-specific files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+Desktop.ini
